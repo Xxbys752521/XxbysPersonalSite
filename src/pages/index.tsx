@@ -66,9 +66,6 @@ function NewestPost({ posts }: { posts: Post[] }) {
                   </h4>
                 </div>
                 <div>
-                  <div className="text-subtle">
-                    <ViewCounter slug={post.slug} />
-                  </div>
                   <div>{moment(post.date).format("LL")}</div>
                 </div>
               </div>

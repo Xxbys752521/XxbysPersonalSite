@@ -30,10 +30,10 @@ const siteMetadata = {
   },
   comment: {
     giscusConfig: {
-      repo: "Th1nhNg0/th1nhng0.vercel.app",
-      repositoryId: "MDEwOlJlcG9zaXRvcnk0MDI2MDQ1MDE=",
+      repo: "Xxbys752521/XxbysPersonalSite",
+      repositoryId: "R_kgDOIVN-Tg",
       category: "General",
-      categoryId: "DIC_kwDOF_9B1c4B-6vK",
+      categoryId: "DIC_kwDOIVN-Ts4CSQ4z",
       mapping: "pathname",
       reactions: "1",
       metadata: "0",

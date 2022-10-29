@@ -1,6 +1,5 @@
-import siteMetadata from "data/siteMetadata";
 import "katex/dist/katex.css";
-import { DefaultSeo, SocialProfileJsonLd } from "next-seo";
+import { DefaultSeo } from "next-seo";
 import { ThemeProvider } from "next-themes";
 import type { AppProps } from "next/app";
 import Analytics from "src/components/analytics";
