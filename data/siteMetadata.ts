@@ -9,6 +9,7 @@ const siteMetadata = {
   },
   headerTitle: "Xxbys",
   description: "A place to put my thoughts in writing",
+  siteUrl: "xxbys.vercel.app",
   siteRepo: "https://github.com/Xxbys752521/XxbysPersonalSite",
   siteLogo: "/static/images/logo.png",
   image: "/static/images/avatar.png",
