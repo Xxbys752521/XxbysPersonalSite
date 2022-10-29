@@ -20,12 +20,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <DefaultSeo {...seo} />
         <Component {...pageProps} />
         <Analytics />
-        <SocialProfileJsonLd
-          type="Person"
-          name={siteMetadata.author}
-          url={siteMetadata.siteUrl}
-          sameAs={[siteMetadata.facebook, siteMetadata.linkedin]}
-        />
       </LayoutWrapper>
     </ThemeProvider>
   );
