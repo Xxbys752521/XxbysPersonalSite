@@ -4,7 +4,6 @@ import moment from "moment";
 import Link from "next/link";
 import React, { useState } from "react";
 import Tag from "src/components/Tag";
-import ViewCounter from "src/components/ViewCounter";
 
 export default function ListLayout({
   posts,
@@ -66,9 +65,6 @@ export default function ListLayout({
                     {moment(post.date).format("LL")}
                   </time>
                 </dd>
-                <div className="font-medium leading-6 text-muted">
-                  <ViewCounter slug={post.slug} />
-                </div>
               </dl>
               <div className="space-y-3 xl:col-span-3">
                 <div>
