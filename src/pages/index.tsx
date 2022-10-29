@@ -3,7 +3,6 @@ import moment from "moment";
 import classNames from "classnames";
 import { allPosts, allSnippets, Post, Snippet } from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
-import ViewCounter from "src/components/ViewCounter";
 import SnippetCard from "src/components/SnippetCard";
 import useSWR from "swr";
 import fetcher from "src/lib/fetcher";

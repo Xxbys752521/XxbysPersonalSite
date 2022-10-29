@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from "react";
 import Comment from "src/components/Comment";
 import ScrollTopAndComment from "src/components/ScrollTopAndComment";
 import Tag from "src/components/Tag";
-import ViewCounter from "src/components/ViewCounter";
 
 export default function PostLayout({
   children,
