@@ -46,7 +46,7 @@ function Header() {
       <div>
         <Link href="/" aria-label={siteMetadata.headerTitle}>
           <a className="relative flex items-center justify-between gap-3 p-1 text-2xl font-semibold duration-200 ease-in-out rounded-md md:p-3 ">
-            <span className="relative z-10 wave">
+            <span className="relative z-10">
               <Logo />
             </span>
             <span className="relative z-10 hidden md:block">
