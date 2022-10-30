@@ -19,7 +19,7 @@ export default function TagViewPage({
         title={tagName.toUpperCase()}
         description={`All the blog with ${tagName} tag`}
       />
-      <ListLayout posts={posts} name={tagName} />
+      <ListLayout posts={posts} />
     </>
   );
 }
