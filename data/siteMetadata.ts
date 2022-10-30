@@ -16,7 +16,7 @@ const siteMetadata = {
   socialBanner: "/static/images/socialbg.png",
 
   email: "Xxbys752521@Gmail.com",
-  github: "https://github.com/th1nhng0",
+  github: "https://github.com/Xxbys752521",
 
   analytics: {
     // If you want to use an analytics provider you have to add it to the

@@ -4,18 +4,17 @@ import classNames from "classnames";
 import { allPosts, allSnippets, Post, Snippet } from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
 import SnippetCard from "src/components/SnippetCard";
-import useSWR from "swr";
-import fetcher from "src/lib/fetcher";
-import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { useAudio } from "react-use";
+import { allTags, Tag } from "src/lib/tags";
+import TagComponent from "src/components/Tag";
 
 export default function Home({
   posts,
   snippets,
+  tags,
 }: {
   snippets: Snippet[];
   posts: Post[];
+  tags: Tag[];
 }) {
   return (
     <div className="space-y-10">
@@ -23,7 +22,7 @@ export default function Home({
         <h1 className="text-3xl font-bold tracking-wide md:text-4xl text-text sm:leading-10 md:leading-14">
           Hello, my name is{" "}
           <Link href="/about">
-            <a className="hover-underline-animation text-rose">Xxbys</a>
+            <a className="hover-underline-animation text-rose">Qizhao</a>
           </Link>
         </h1>
         <h2 className="mt-3 font-mono md:text-lg text-subtle">
@@ -37,6 +36,7 @@ export default function Home({
       </div>
       <NewestPost posts={posts} />
       <FeaturedSnippet snippets={snippets} />
+      <Tags tags={tags} />
     </div>
   );
 }
@@ -102,7 +102,7 @@ function FeaturedSnippet({ snippets }: { snippets: Snippet[] }) {
           <SnippetCard key={snippet.slug} {...snippet} />
         ))}
       </div>
-      <Link href="/blog">
+      <Link href="/snippet">
         <a className="flex items-center mt-5 transition-all hover:text-text text-subtle">
           View all snippets
           <svg
@@ -123,6 +123,19 @@ function FeaturedSnippet({ snippets }: { snippets: Snippet[] }) {
   );
 }
 
+function Tags({ tags }: { tags: Tag[] }) {
+  return (
+    <div>
+      <h3 className="mb-6 text-2xl font-bold">Tags</h3>
+      <div className="flex flex-wrap gap-4 text-lg">
+        {tags.map((tag) => (
+          <TagComponent key={tag.name} text={tag.name} count={tag.count} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export async function getStaticProps() {
   const posts = allPosts
     .filter((post) => post.draft !== true)
@@ -135,5 +148,6 @@ export async function getStaticProps() {
     )
     .sort((a, b) => moment(b.date).diff(moment(a.date)))
     .slice(0, 4);
-  return { props: { posts, snippets } };
+  const tags = allTags().sort((a, b) => b.count - a.count);
+  return { props: { posts, snippets, tags } };
 }
