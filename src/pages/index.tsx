@@ -1,9 +1,17 @@
 import Link from "next/link";
 import moment from "moment";
 import classNames from "classnames";
-import { allPosts, allSnippets, Post, Snippet } from "contentlayer/generated";
+import {
+  allPosts,
+  allSnippets,
+  allProjects,
+  Post,
+  Snippet,
+  Project,
+} from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
 import SnippetCard from "src/components/SnippetCard";
+import ProjectCard from "src/components/ProjectCard";
 import { allTags, Tag } from "src/lib/tags";
 import TagComponent from "src/components/Tag";
 
@@ -11,10 +19,12 @@ export default function Home({
   posts,
   snippets,
   tags,
+  projects,
 }: {
   snippets: Snippet[];
   posts: Post[];
   tags: Tag[];
+  projects: Project[];
 }) {
   return (
     <div className="space-y-10">
@@ -35,6 +45,7 @@ export default function Home({
         </h2>
       </div>
       <NewestPost posts={posts} />
+      <Projects projects={projects} />
       <FeaturedSnippet snippets={snippets} />
       <Tags tags={tags} />
     </div>
@@ -92,7 +103,6 @@ function NewestPost({ posts }: { posts: Post[] }) {
     </div>
   );
 }
-
 function FeaturedSnippet({ snippets }: { snippets: Snippet[] }) {
   return (
     <div>
@@ -105,6 +115,36 @@ function FeaturedSnippet({ snippets }: { snippets: Snippet[] }) {
       <Link href="/snippet">
         <a className="flex items-center mt-5 transition-all hover:text-text text-subtle">
           View all snippets
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </a>
+      </Link>
+    </div>
+  );
+}
+
+function Projects({ projects }: { projects: Project[] }) {
+  return (
+    <div>
+      <h3 className="mb-6 text-2xl font-bold">My Projects</h3>
+      <div className="grid gap-5 md:grid-cols-2">
+        {projects.map((project) => (
+          <ProjectCard key={project.slug} {...project} />
+        ))}
+      </div>
+      <Link href="/projects">
+        <a className="flex items-center mt-5 transition-all hover:text-text text-subtle">
+          View all Projects
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="w-5 h-5"
@@ -148,6 +188,12 @@ export async function getStaticProps() {
     )
     .sort((a, b) => moment(b.date).diff(moment(a.date)))
     .slice(0, 4);
+  const projects = allProjects
+    .map((project) =>
+      pick(project, ["description", "title", "logos", "slug", "date"])
+    )
+    .sort((a, b) => moment(b.date).diff(moment(a.date)))
+    .slice(0, 4);
   const tags = allTags().sort((a, b) => b.count - a.count);
-  return { props: { posts, snippets, tags } };
+  return { props: { posts, snippets, tags, projects } };
 }
