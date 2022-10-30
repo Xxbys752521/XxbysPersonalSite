@@ -1,15 +1,15 @@
-import { Project } from "contentlayer/generated";
+import { Snippet } from "contentlayer/generated";
 import { motion, useViewportScroll } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import ScrollTopAndComment from "src/components/ScrollTopAndComment";
+import ScrollTopAndComment from "src/components/ApperOnTheDetailPage/ScrollTopAndComment";
 
-export default function ProjectInterface({
+export default function SnippetLayout({
   children,
-  project,
+  snippet,
 }: {
   children: React.ReactNode;
-  project: Project;
+  snippet: Snippet;
 }) {
   const [percent, setpercent] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,14 +43,14 @@ export default function ProjectInterface({
       </div>
       <ScrollTopAndComment />
       <article>
-        <p className="text-subtle">{moment(project.date).format("LL")}</p>
+        <p className="text-subtle">{moment(snippet.date).format("LL")}</p>
         <div className="mb-4">
           <h1 className="text-3xl font-bold text-rose md:text-5xl ">
-            {project.title}
+            {snippet.title}
           </h1>
         </div>
         <div className=" border-b-[1px] pb-4 border-muted ">
-          <p className="text-lg text-text">{project.description}</p>
+          <p className="text-lg text-text">{snippet.description}</p>
         </div>
         <div className="mt-8 prose max-w-none" ref={ref}>
           {children}

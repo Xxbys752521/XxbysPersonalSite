@@ -3,7 +3,7 @@ import { pick } from "contentlayer/utils";
 import moment from "moment";
 import { NextSeo } from "next-seo";
 import React from "react";
-import ListLayout from "src/layouts/ListLayout";
+import ListLayout from "src/components/layouts/ListLayout";
 import { allTags } from "src/lib/tags";
 
 export default function TagViewPage({

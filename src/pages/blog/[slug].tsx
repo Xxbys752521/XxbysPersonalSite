@@ -4,7 +4,7 @@ import { useMDXComponent } from "next-contentlayer/hooks";
 import moment from "moment";
 import { NewsArticleJsonLd, NextSeo } from "next-seo";
 import { pick } from "contentlayer/utils";
-import PostLayout from "src/layouts/PostLayout";
+import PostLayout from "src/components/layouts/PostLayout";
 import components from "../../components/MDXComponents";
 
 export default function BlogDetailPage({ post }: { post: Post }) {

@@ -2,7 +2,7 @@ import { allProjects, Project } from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
 import moment from "moment";
 import { NextSeo } from "next-seo";
-import ProjectLayout from "src/layouts/ListLayout-project";
+import ProjectLayout from "src/components/layouts/ListLayout-project";
 
 export default function BlogPage({ projects }: { projects: Project[] }) {
   return (

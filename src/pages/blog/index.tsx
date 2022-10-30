@@ -1,14 +1,14 @@
 import moment from "moment";
 import { allPosts, Post } from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
-import ListLayout from "src/layouts/ListLayout";
+import ListLayout from "src/components/layouts/ListLayout";
 import { NextSeo } from "next-seo";
 
 export default function BlogPage({ posts }: { posts: Post[] }) {
   return (
     <>
       <NextSeo title="Blog" description="All of the blog on this website." />
-      <ListLayout posts={posts} name="Blog" />
+      <ListLayout posts={posts} />
     </>
   );
 }

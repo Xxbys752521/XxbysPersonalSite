@@ -2,7 +2,7 @@ import { allSnippets, Snippet } from "contentlayer/generated";
 import { pick } from "contentlayer/utils";
 import moment from "moment";
 import { NextSeo } from "next-seo";
-import ListLayout2 from "src/layouts/ListLayout2";
+import ListLayout2 from "src/components/layouts/ListLayout2";
 
 export default function BlogPage({ snippets }: { snippets: Snippet[] }) {
   return (

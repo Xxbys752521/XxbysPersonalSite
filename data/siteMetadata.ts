@@ -1,6 +1,7 @@
 const siteMetadata = {
   title: "Xxbys",
   author: "QizhaoWang",
+  language: "en-us",
   SEO_author: {
     first_name: "Qizhao",
     last_name: "Wang",

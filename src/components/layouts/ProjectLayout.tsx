@@ -1,20 +1,21 @@
-import { Snippet } from "contentlayer/generated";
+import { Project } from "contentlayer/generated";
 import { motion, useViewportScroll } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import ScrollTopAndComment from "src/components/ScrollTopAndComment";
+import ScrollTopAndComment from "src/components/ApperOnTheDetailPage/ScrollTopAndComment";
 
-export default function SnippetLayout({
+export default function ProjectInterface({
   children,
-  snippet,
+  project,
 }: {
   children: React.ReactNode;
-  snippet: Snippet;
+  project: Project;
 }) {
   const [percent, setpercent] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useViewportScroll();
 
+  // scoller
   useEffect(() => {
     const unsub = scrollY.onChange((value) => {
       if (ref.current != null) {
@@ -29,6 +30,7 @@ export default function SnippetLayout({
 
   return (
     <div>
+      {/* scoll bar on the top */}
       <div className="fixed top-0 left-0 z-50 w-full">
         <motion.div
           animate={{ opacity: percent > 0 ? 1 : 0 }}
@@ -41,16 +43,18 @@ export default function SnippetLayout({
           />
         </motion.div>
       </div>
+
       <ScrollTopAndComment />
+
       <article>
-        <p className="text-subtle">{moment(snippet.date).format("LL")}</p>
+        <p className="text-subtle">{moment(project.date).format("LL")}</p>
         <div className="mb-4">
           <h1 className="text-3xl font-bold text-rose md:text-5xl ">
-            {snippet.title}
+            {project.title}
           </h1>
         </div>
         <div className=" border-b-[1px] pb-4 border-muted ">
-          <p className="text-lg text-text">{snippet.description}</p>
+          <p className="text-lg text-text">{project.description}</p>
         </div>
         <div className="mt-8 prose max-w-none" ref={ref}>
           {children}

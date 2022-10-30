@@ -2,7 +2,7 @@ import { allSnippets, Snippet } from "contentlayer/generated";
 import siteMetadata from "data/siteMetadata";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { ArticleJsonLd, NextSeo } from "next-seo";
-import SnippetLayout from "src/layouts/SnippetLayout";
+import SnippetLayout from "src/components/layouts/SnippetLayout";
 import components from "../../components/MDXComponents";
 
 export default function BlogDetailPage({ snippet }: { snippet: Snippet }) {

@@ -1,7 +1,7 @@
 import { Snippet } from "contentlayer/generated";
 import { motion } from "framer-motion";
 import React, { useState } from "react";
-import SnippetCard from "src/components/SnippetCard";
+import SnippetCard from "src/components/ShowCard/SnippetCard";
 
 export default function ListLayout({ snippets }: { snippets: Snippet[] }) {
   const [search, setsearch] = useState("");
@@ -13,13 +13,17 @@ export default function ListLayout({ snippets }: { snippets: Snippet[] }) {
     <div>
       <div className="border-b-[1px] pb-8 mb-8 border-muted">
         <div className="max-w-xl ">
+          {/* Header */}
           <h1 className="mb-4 text-3xl font-bold uppercase md:text-5xl text-text">
             Snippets
           </h1>
 
+          {/* counter */}
           <p className="mb-4 text-subtle">
             These are {snippets.length} snippets that I have written.
           </p>
+
+          {/* search bar */}
           <div className="relative w-full">
             <input
               aria-label="Search snippets"
@@ -46,11 +50,13 @@ export default function ListLayout({ snippets }: { snippets: Snippet[] }) {
           </div>
         </div>
       </div>
+
       <motion.div
         className="grid gap-5 md:grid-cols-2"
         layout="position"
         transition={{ duration: 0.5 }}
       >
+        {/* card list */}
         {filteredPosts.map((snippet) => (
           <SnippetCard key={snippet.slug} {...snippet} />
         ))}

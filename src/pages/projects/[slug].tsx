@@ -2,7 +2,7 @@ import { allProjects, Project } from "contentlayer/generated";
 import siteMetadata from "data/siteMetadata";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { ArticleJsonLd, NextSeo } from "next-seo";
-import ProjectInterface from "src/layouts/ProjectLayout";
+import ProjectInterface from "src/components/layouts/ProjectLayout";
 import components from "../../components/MDXComponents";
 
 export default function BlogDetailPage({ project }: { project: Project }) {

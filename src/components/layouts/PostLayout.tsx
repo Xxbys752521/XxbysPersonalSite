@@ -2,9 +2,9 @@ import { Post } from "contentlayer/generated";
 import { motion, useViewportScroll } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import Comment from "src/components/Comment";
-import ScrollTopAndComment from "src/components/ScrollTopAndComment";
-import Tag from "src/components/Tag";
+import Comment from "src/components/ApperOnTheDetailPage/Comment";
+import ScrollTopAndComment from "src/components/ApperOnTheDetailPage/ScrollTopAndComment";
+import Tag from "src/components/ApperOnTheDetailPage/Tag";
 
 export default function PostLayout({
   children,
@@ -17,6 +17,7 @@ export default function PostLayout({
   const ref = useRef<HTMLDivElement>(null);
   const { scrollY } = useViewportScroll();
 
+  // scoller
   useEffect(() => {
     const unsub = scrollY.onChange((value) => {
       if (ref.current != null) {
@@ -31,6 +32,7 @@ export default function PostLayout({
 
   return (
     <div>
+      {/* scoll bar on the top */}
       <div className="fixed top-0 left-0 z-50 w-full">
         <motion.div
           animate={{ opacity: percent > 0 ? 1 : 0 }}
@@ -46,12 +48,16 @@ export default function PostLayout({
           />
         </motion.div>
       </div>
+
       <ScrollTopAndComment />
       <article>
+        {/* title */}
         <h1 className="mb-4 text-3xl font-bold text-rose md:text-5xl ">
           {post.title}
         </h1>
+
         <div className=" border-b-[1px] pb-4 border-muted ">
+          {/* reading time */}
           <div className="flex flex-col items-start justify-between w-full mt-2 md:flex-row md:items-center">
             <div className="flex items-center">
               <p className="text-subtle">{moment(post.date).format("LL")}</p>
@@ -60,6 +66,7 @@ export default function PostLayout({
               {post.readingTime.text}
             </p>
           </div>
+          {/* tags */}
           <div className="flex flex-wrap gap-3 mt-4">
             {post.tags?.map((tag) => (
               <Tag key={tag} text={tag} />

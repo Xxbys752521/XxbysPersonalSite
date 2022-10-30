@@ -3,15 +3,9 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import Link from "next/link";
 import React, { useState } from "react";
-import Tag from "src/components/Tag";
+import Tag from "src/components/ApperOnTheDetailPage/Tag";
 
-export default function ListLayout({
-  posts,
-  name,
-}: {
-  posts: Post[];
-  name: string;
-}) {
+export default function ListLayout({ posts }: { posts: Post[] }) {
   const [search, setsearch] = useState("");
   const filteredPosts = posts.filter((post) =>
     post.title.toLowerCase().includes(search.toLowerCase())
@@ -21,13 +15,17 @@ export default function ListLayout({
     <div>
       <div className="border-b-[1px] pb-8 mb-8 border-muted">
         <div className="max-w-xl ">
+          {/* header */}
           <h1 className="mb-4 text-3xl font-bold uppercase md:text-5xl text-text">
-            {name}
+            Blog
           </h1>
 
+          {/* counter */}
           <p className="mb-4 text-subtle">
             These are {posts.length} posts that I have written.
           </p>
+
+          {/* search bar */}
           <div className="relative w-full">
             <input
               aria-label="Search articles"
@@ -54,9 +52,11 @@ export default function ListLayout({
           </div>
         </div>
       </div>
+
       <motion.ul layout="position" transition={{ duration: 0.5 }}>
         {filteredPosts.map((post) => (
           <motion.li layout="position" key={post.slug} className="py-4">
+            {/* article list */}
             <article className="space-y-2 xl:grid xl:grid-cols-4 xl:space-y-0 xl:items-baseline">
               <dl>
                 <dt className="sr-only">Published on</dt>
