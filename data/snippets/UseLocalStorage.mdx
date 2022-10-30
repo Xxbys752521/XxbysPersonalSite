@@ -1,0 +1,26 @@
+---
+title: "A custom hooks to use local storage state"
+description: "Custom hooks to use an async effect"
+logos: []
+date: "2022-10-22"
+---
+
+Custom hooks to use local storage state
+
+```js
+import { useState, useEffect } from "react";
+export let useLocalStorageState = (key, defaultValue = "", options = {}) => {
+  let { serialize = JSON.stringify, deserialize = JSON.parse } = options;
+  let [state, setState] = useState(() => {
+    let valueInLocalStorage = window.localStorage.getItem(key);
+    if (valueInLocalStorage) {
+      return deserialize(valueInLocalStorage);
+    }
+    return defaultValue;
+  });
+  useEffect(() => {
+    window.localStorage.setItem(key, serialize(state));
+  }, [key, state, serialize]);
+  return [state, setState];
+};
+```
