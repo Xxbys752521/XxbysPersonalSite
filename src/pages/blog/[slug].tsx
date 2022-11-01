@@ -1,9 +1,7 @@
 import { allPosts, Post } from "contentlayer/generated";
 import siteMetadata from "data/siteMetadata";
 import { useMDXComponent } from "next-contentlayer/hooks";
-import moment from "moment";
 import { NewsArticleJsonLd, NextSeo } from "next-seo";
-import { pick } from "contentlayer/utils";
 import PostLayout from "src/components/layouts/PostLayout";
 import components from "../../components/MDXComponents";
 

@@ -1,14 +1,6 @@
 import { GetServerSideProps } from "next";
-import {
-  allPosts,
-  allPages,
-  allSnippets,
-  Post,
-  Snippet,
-  Page,
-} from "contentlayer/generated";
+import { allPosts } from "contentlayer/generated";
 import siteMetadata from "data/siteMetadata";
-import { allTags, Tag } from "src/lib/tags";
 import { Feed } from "feed";
 
 export default function SiteMap() {

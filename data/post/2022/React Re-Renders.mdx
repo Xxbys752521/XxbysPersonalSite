@@ -1,14 +1,344 @@
 ---
-title: "Why React Re-Renders"
-date: "2022-10-02"
-summary: "Build a blog from scratch"
-tags: ["React", "Tutorials"]
+title: "为什么React会重新渲染"
+date: "2022-11-01"
+summary: "React重新渲染机制"
+tags: ["React", "原理"]
 ---
 
-# Introduction
+import { Sandpack } from "@codesandbox/sandpack-react";
 
-So, I'll be honest. I had been working with React for a lot of time without really understanding how React's re-rendering process worked.
+import { nightOwl } from "@codesandbox/sandpack-themes";
 
-I think this is true for lots of React developers. We understand enough to get by, but if you ask a group of React developers a question like “What triggers a re-render in React?”, you'll likely get a handful of different hand-wavy answers.
+# 介绍
 
-There are a lot of misconceptions out there about this topic, and it can lead to a lot of uncertainty. If we don't understand React's render cycle, how can we understand how to use React.memo, or when we should wrap our functions in useCallback??
+学习 React 以来，我似乎没有**真正了解 React 的重新渲染过程是如何工作的**。😅
+
+我认为这句话适用于很多 React 开发者，我们似乎已经足够理解 React 如何使用，但是如果你问一群 React 开发人员这样的问题：“什么会触发 React 中的重新渲染？” ，可能会得到一些不同的答案。
+
+关于这个话题有很多误解，这可能会导致很多不确定性。如果我们不了解 React 的渲染机制，我们应该如何使用 ReactMemo，或者何时将函数包装在 useCallback 中??
+
+在本教程中，我将为 React 重新渲染的时间和原因构建一个心智模型。还将介绍如何使用 React 开发工具来判断特定组件重新渲染的原因。
+
+# React 核心循环
+
+所以，让我们从一个基础事实开始：**React 中的每次重新渲染都始于状态变化。**它是 React 中组件重新渲染的“触发器”。
+
+这听起来似乎不太正确，当它们的 Props 发生变化时，组件不会重新渲染吗？Context 呢？？
+
+是这样的：当一个组件重新渲染时，**它也会重新渲染它的所有子组件。**
+
+一个例子：
+
+<Sandpack
+  template="react"
+  files={{
+    "/App.js": `import React from 'react';
+
+function App() {
+return (
+
+<>
+  <Counter />
+</>
+); }
+
+function Counter() {
+const [count, setCount] = React.useState(0);
+
+return (
+
+<main>
+  <BigCountNumber count={count} />
+  <button onClick={() => setCount(count + 1)}>增加</button>
+</main>
+); }
+
+function BigCountNumber({ count }) {
+return (
+
+<p>
+  <span className="count">Count:</span>
+  {count}
+</p>
+); }
+
+export default App;`,
+  }}
+/>
+
+在这个例子中, 共有三个组件：最高级别的`App`组件 , 渲染了`Counter`组件,而`Counter`组件又渲染了`BigCountNumber`组件.
+
+在 React 中，每个状态都附加到特定的组件中。在这个例子中，我们有一个状态`count`，它与`Counter`组件相关联。
+每当此状态发生变化时，都会使`Counter`重新渲染。并且又因为`BigCountNumber`正在被`Counter`渲染，它也会被重新渲染。
+
+现在，让我们澄清一个误解：**每当状态发生变化时，整个应用程序都会重新渲染。**
+
+通常一些开发人员认为 React 中的每个状态发生变化都会强制使整个应用程序重新渲染，**但事实并非如此**。重新渲染只会影响拥有状态的组件和其子组件。在此示例中，`App`组件不必在 **count** 状态更改时重新渲染。
+
+然而，与其死记硬背，不如让我们尝试是否能弄清楚原理。
+
+**React 的主要工作是保持 UI 与 React 状态同步。重新渲染的目的是找出需要更改的内容。**
+
+首先在上面的计数器示例中。当应用程序第一次挂载时，React 会开始渲染所有的组件并为`DOM`提供以下结构：
+
+```HTML
+<main>
+  <p>
+    <span class="count">Count:</span>
+    0
+  </p>
+  <button>
+    Increment
+  </button>
+</main>
+```
+
+当用户点击按钮时，计数状态从 0 变到 1。这对 UI 有何影响？React 将重新运行`Counter`和`BigCountNumber`组件的代码，生成我们想要的更新的`DOM`：
+
+```HTML
+<main>
+  <p>
+    <span class="prefix">Count:</span>
+    1
+  </p>
+  <button>
+    Increment
+  </button>
+</main>
+```
+
+React 中每次渲染都是一个快照，就像拍的照片一样，根据当前的状态决定显示的 UI 应该是什么样子。 React 会去找出这两个快照之间发生了什么变化。在这种情况下，它看到我们的段落有一个从 `0 `变为 `1 `的节点，因此它操作`DOM`节点以匹配快照的变化。随后 React 会等待下一次状态更改。
+
+### 而这就是**React 核心循环**
+
+在示例中，状态`count`与`Counter`组件相关联。因为单向数据流的关系，因为数据不能在 React 应用程序中向上流动，我们于是可以知道这种状态变化不可能影响`<App />`. 所以我们并不需要重新渲染`App`组件。
+
+但是我们确实需要重新渲染`Counter`的子组件，`BigCountNumber`. 因为这是实际显示`count`状态的组件。如果我们不渲染它，我们将不知道我们段落的 DOM 节点应该从 0 变为 1。
+
+重新渲染的目的是弄清楚状态变化应该如何影响用户界面。因此，我们需要重新渲染所有可能**受影响**的组件，来获得准确的快照。
+
+# Not about the Props
+
+OK ,接下来是另一个误解：**一个组件会因为它的`Props`改变而重新渲染**。为了更好的理解，让我们用另一个例子来解释。在下面的代码中，我们的“计数器”应用程序有了一个全新的组件：
+
+<Sandpack
+  template="react"
+  files={{
+    "/App.js": `import React from 'react';
+
+import Counter from "./Counter";
+
+function App() {
+return (
+
+<>
+  <Counter />
+</>
+); }
+
+export default App;`,
+    "/Counter.js":`import React from 'react';
+
+import Decoration from './Decoration';
+import BigCountNumber from './BigCountNumber';
+
+function Counter() {
+const [count, setCount] = React.useState(0);
+
+return (
+
+<main>
+<BigCountNumber count={count} />
+<button onClick={() => setCount(count + 1)}>
+Increment
+</button>
+
+      {/* 👇 新组件 👇 */}
+      <Decoration />
+    </main>
+
+);
+}
+
+export default Counter;`,
+    "/Decoration.js":`function Decoration() {
+  return (
+    <div className="decoration">
+      ⛵️
+    </div>
+  );
+}
+
+export default Decoration`,
+    "/BigCountNumber.js":`function BigCountNumber({ count }) {
+  return (
+    <p>
+      <span className="prefix">Count:</span>
+      {count}
+    </p>
+  );
+}
+
+export default BigCountNumber;`
+}}
+/>
+
+我们的应用现在有了一艘可爱的小帆船，由`<Decoration />`组件渲染。它不依赖于`count`的状态，所以当状态改变时它可能不会重新渲染，对吧？
+
+**_并不完全是。_**
+
+**使用浏览器的 React devtools，它可以为我们突出显示页面经过重新渲染的部分。** - todo
+
+当一个组件重新渲染时，它会尝试重新渲染所有子组件，无论是否通过 props 传递了特定的状态变量。
+
+这似乎有些违反直觉，如果我们不将`count`作为`Props`传递给 `<Decoration />`，为什么需要重新渲染？
+
+答案是这样的：**React 很难确定地知道 `<Decoration />` 是否直接或间接地取决于计数状态变量。**
+
+在理想的世界里，React 组件总是“纯”的。 纯组件是在给定相同`Props`时**始终**生成相同 UI 的组件。
+
+在现实世界中，我们的许多组件都是不纯的。想要创建一个不纯的组件非常容易：
+
+```js
+function CurrentTime() {
+  const now = new Date();
+  return <p>It is currently {now.toString()}</p>;
+}
+```
+
+显然，这个组件在渲染时将显示不同的值，因此它是一个不纯的组件
+
+如果我们将`ref`作为`prop`传递，React 将无法判断自上次渲染以来我们是否对它进行了更改。因此，为了安全起见，它选择重新渲染。
+
+React 的首要目标是确保用户看到的 UI 与应用的状态保持同步。因此，React 会在渲染过多时出错。它不想冒险向用户展示陈旧的 UI。
+
+所以，回到我们的误解：**`Props`与重新渲染无关**。我们的`<BigCountNumber>`组件没有重新渲染，因为`count`Prop 发生了变化。
+
+当一个组件重新渲染时，因为它的一个状态已经更新，重新渲染将沿着 DOM 树向下，以便 React 填充这个新 DOM 树的细节，以得到新的快照。
+
+这是一套标准的程序，但有一种方法可以稍微调整一下。
+
+## 创建 PureComponent
+
+您可能熟悉 React.memo 或 React.PureComponent。这允许我们忽略某些重新渲染请求。
+
+```js
+function Decoration() {
+  return <div className="decoration">⛵️</div>;
+}
+export default React.memo(Decoration);
+```
+
+通过用`React.memo`包装我们的装饰组件，我们告诉 React，我知道这个组件是纯组件。除非它的`Prop`发生变化，否则不需要重新渲染它。
+
+这使用了一种称为**_memoization_**的技术。它缺少 R，但我们可以将其视为“记忆”。这个想法是 React 会记住之前的快照。 如果没有任何 props 发生变化，React 将重新使用该快照，而不是生成一个全新的快照。  
+假设我用` React.memo`包装了`<BigCountNumber>`和 `<Decoration>`。 以下是这将如何影响重新渲染：
+
+当`count`发生变化时，会触发重新渲染`Counter`，React 会尝试渲染两个子组件。
+
+此时，因为`<BigCountNumber>`的 Prop `count`已经改变，`<BigCountNumber>`被重新渲染。但是因为`<decoration>`的 props 没有改变，所以使用原始快照代替。
+
+这是一个实时代码版本。每个`< memoized >`组件都添加了一个 console.info 调用，因此您可以在控制台中准确查看每个组件何时呈现.
+
+<Sandpack
+  template="react"
+  options={{ 
+    showConsole: true, 
+    showConsoleButton: true 
+  }}
+  files={{
+    "/App.js": `import React from 'react';
+
+import Counter from "./Counter";
+
+function App() {
+return (
+
+<>
+  <Counter />
+</>
+); }
+
+export default App;`,
+    "/Counter.js":`import React from 'react';
+
+import Decoration from './Decoration';
+import BigCountNumber from './BigCountNumber';
+
+function Counter() {
+const [count, setCount] = React.useState(0);
+
+return (
+
+<main>
+<BigCountNumber count={count} />
+<button onClick={() => setCount(count + 1)}>
+Increment
+</button>
+
+      {/* 👇 新组件 👇 */}
+      <Decoration />
+    </main>
+
+);
+}
+
+export default Counter;`,
+    "/Decoration.js":`import React from 'react';
+
+function Decoration() {
+console.info('Decoration render');
+
+return (
+
+<div className="decoration">⛵️</div>
+); }
+
+export default React.memo(Decoration);`,
+"/BigCountNumber.js":`import React from 'react';
+
+function BigCountNumber({ count }) {
+console.info('BigCountNumber render');
+
+return (
+
+<p>
+  <span className="prefix">Count:</span>
+  {count}
+</p>
+); }
+
+export default React.memo(BigCountNumber);`
+}}
+/>
+
+您可能会疑惑：为什么这不是默认行为？ 大多数时候，这不是正是我们想要的吗？  
+如果我们跳过不需要的重新渲染，我们肯定会提高性能。为什么不这么做呢？  
+ 我的理解是作为开发人员，我们倾向于高估重新渲染的成本。 对于我们的`<Decoration>`组件，重新渲染非常快。 如果一个组件有一堆 props 而不是很多子组件，与重新渲染组件相比，检查 props 是否发生变化实际上可能会更慢。  
+ 因此，搞清楚每个 props 会适得其反。 React 旨在非常快速地捕获这些快照，但在特定情况下，对于具有大量后代组件或内部工作量很大的组件，这样做可以提供相当多的帮助。
+
+## 那么 Context 呢？
+
+我们还没有讨论过 Context，但它并没有使事情变得太复杂。
+
+默认情况下，如果组件的状态发生变化，组件的所有子组件都将重新渲染。因此，如果我们通过上下文向所有后代提供该状态，它并不会真正改变任何东西，无论哪种方式，这些组件都会重新渲染！
+
+现在就纯组件而言，上下文有点像“隐形 Props”，或者可能是“内部 Props”。
+
+让我们看一个例子。这里我们有一个使用 UserContext 上下文的纯组件：
+
+```js
+const GreetUser = React.memo(() => {
+  const user = React.useContext(UserContext);
+  if (!user) {
+    return "Hi there!";
+  }
+  return `Hello ${user.name}!`;
+});
+```
+
+在这个例子中，`<GreetUser>`是一个没有 props 的纯组件，但它有一个“不可见”或“内部”的依赖：`user`被存储在状态中，并通过 Context 传递。 如果该用户状态发生更改，则会发生重新渲染，并且 GreetUser 将生成新的快照，而不是依赖于旧的快照。 React 可以判断这个组件正在使用这个特定的 context，所以它把它当作一个 Props 来对待。
+
+# 结论
+
+- todo

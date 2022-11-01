@@ -1,0 +1,51 @@
+---
+title: "在MDX文件内使用React组件"
+date: "2022-10-30"
+tags: ["MDX", "React", "JSX"]
+draft: false
+summary: "个人MDX内嵌JSX机制的理解。以及一些案例"
+---
+
+import { Sandpack } from "@codesandbox/sandpack-react";
+
+import { nightOwl } from "@codesandbox/sandpack-themes";
+
+<Sandpack
+  template="react"
+  files={{
+    "/App.js": `import React from 'react';
+
+function App() {
+return (
+
+<>
+  <Counter />
+  <footer>
+    <p>Copyright 2022 Big Count Inc.</p>
+  </footer>
+</>
+); }
+
+function Counter() {
+const [count, setCount] = React.useState(0);
+
+return (
+
+<main>
+  <BigCountNumber count={count} />
+  <button onClick={() => setCount(count + 1)}>Increment</button>
+</main>
+); }
+
+function BigCountNumber({ count }) {
+return (
+
+<p>
+  <span className="prefix">Count:</span>
+  {count}
+</p>
+); }
+
+export default App;`,
+  }}
+/>
