@@ -30,8 +30,8 @@ function Header() {
       <div className="flex items-center justify-center text-base leading-5 ">
         <div className="hidden md:block">
           {headerNavLinks.map((link) => (
-            <Link key={link.title} href={link.href}>
-              <motion.a
+            <Link key={link.title} href={link.href} legacyBehavior>
+              <motion.span
                 onMouseEnter={() => sethovered(link.title)}
                 onMouseLeave={() => sethovered(null)}
                 className={classNames(
@@ -51,7 +51,7 @@ function Header() {
                   )}
                 </AnimatePresence>
                 <span className="relative z-10">{link.title}</span>
-              </motion.a>
+              </motion.span>
             </Link>
           ))}
         </div>
